@@ -1,1 +1,38 @@
+#include <bits/stdc++.h>
+using namespace std;
 
+pair<int, int> findMissingRepeating(vector<int>& arr) {
+    long long n = arr.size();
+
+    long long sumN = n * (n + 1) / 2;
+    long long sumSqN = n * (n + 1) * (2 * n + 1) / 6;
+
+    long long actualSum = 0, actualSqSum = 0;
+
+    for (int num : arr) {
+        actualSum += num;
+        actualSqSum += 1LL * num * num;
+    }
+
+    long long diff = actualSum - sumN; // x - y
+
+    long long sqDiff = actualSqSum - sumSqN; // x² - y²
+
+    long long sumXY = sqDiff / diff; // x + y
+
+    int repeating = (diff + sumXY) / 2;
+    int missing = sumXY - repeating;
+
+    return {repeating, missing};
+}
+
+int main() {
+    vector<int> arr = {3, 1, 2, 5, 3};
+
+    pair<int, int> ans = findMissingRepeating(arr);
+
+    cout << "Repeating Number: " << ans.first << endl;
+    cout << "Missing Number: " << ans.second << endl;
+
+    return 0;
+}
