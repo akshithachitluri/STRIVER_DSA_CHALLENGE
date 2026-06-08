@@ -1,0 +1,46 @@
+#include <iostream>
+#include <vector>
+#include <unordered_map>
+using namespace std;
+
+int subarraysWithXorK(vector<int>& arr, int k)
+{
+    unordered_map<int, int> mp;
+
+    int xr = 0;
+    int cnt = 0;
+
+    mp[0] = 1;
+
+    for (int i = 0; i < arr.size(); i++)
+    {
+        xr = xr ^ arr[i];
+
+        int x = xr ^ k;
+
+        if (mp.find(x) != mp.end())
+            cnt += mp[x];
+
+        mp[xr]++;
+    }
+
+    return cnt;
+}
+
+int main()
+{
+    int n, k;
+
+    cin >> n;
+
+    vector<int> arr(n);
+
+    for (int i = 0; i < n; i++)
+        cin >> arr[i];
+
+    cin >> k;
+
+    cout << subarraysWithXorK(arr, k);
+
+    return 0;
+}
