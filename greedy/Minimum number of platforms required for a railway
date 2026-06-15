@@ -1,0 +1,22 @@
+class Solution {
+  public:
+    int minPlatform(vector<int>& arr, vector<int>& dep) {
+        int n = arr.size();
+        sort(arr.begin(),arr.end());
+        sort(dep.begin(),dep.end());
+        int cnt = 0;
+        int l =0,r=0;
+        int maxi = INT_MIN;
+        while(l<n){
+            if(arr[l] <= dep[r]){
+                cnt+=1;
+                l++;
+            }else{
+                cnt-=1;
+                r++;
+            }
+            maxi = max(cnt,maxi);
+        }
+        return maxi;
+    }
+};
