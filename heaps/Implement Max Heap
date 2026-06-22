@@ -1,0 +1,57 @@
+class maxHeap {
+private:
+    vector<int> heap;
+
+public:
+    void push(int x) {
+        heap.push_back(x);
+
+        int idx = heap.size() - 1;
+
+        while (idx > 0) {
+            int parent = (idx - 1) / 2;
+
+            if (heap[parent] < heap[idx]) {
+                swap(heap[parent], heap[idx]);
+                idx = parent;
+            } else {
+                break;
+            }
+        }
+    }
+
+    void pop() {
+        if (heap.empty()) return;
+
+        heap[0] = heap.back();
+        heap.pop_back();
+
+        int idx = 0;
+        int n = heap.size();
+
+        while (true) {
+            int largest = idx;
+            int left = 2 * idx + 1;
+            int right = 2 * idx + 2;
+
+            if (left < n && heap[left] > heap[largest])
+                largest = left;
+
+            if (right < n && heap[right] > heap[largest])
+                largest = right;
+
+            if (largest == idx) break;
+
+            swap(heap[idx], heap[largest]);
+            idx = largest;
+        }
+    }
+
+    int peek() {
+        return heap.empty() ? -1 : heap[0];
+    }
+
+    int size() {
+        return heap.size();
+    }
+};
