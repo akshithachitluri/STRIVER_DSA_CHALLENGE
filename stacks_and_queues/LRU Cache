@@ -1,0 +1,75 @@
+class Node{
+    
+  public : 
+  
+  int data;
+  int key;
+  Node*prev;
+  Node*next;
+  
+  Node(int data,int key){
+      this->data = data;
+      this->key = key;
+  }
+    
+};
+
+
+class LRUCache {
+    unordered_map<int,Node*>mp;
+    Node*head;
+    Node*tail;
+int size ;
+  public:
+    LRUCache(int cap) {
+        size = cap;
+        head = NULL;
+        tail = NULL;
+    }
+
+    int get(int key) {
+      if(mp.count(key)==0) return -1;
+      return    mp[key]->data;
+    }
+
+        
+    void put(int key, int value) {
+
+            if(mp.count(key)){
+                 Node*temp1 = mp[key]->next;
+                 Node*temp2 = mp[key]->prev;
+                 mp[key]->next = NULL;
+                 mp[key]->prev = NULL;
+                 mp[key]->data = value;
+                 mp[key]->prev = head;
+                 head->next = mp[key];
+                 head = mp[key]->prev;
+                if(temp1!=NULL) temp1->prev = temp2;
+                 if(temp2!=NULL) temp2->next = temp1;
+            }
+            else{
+                if(mp.size()==size){
+                    mp.erase(tail->key);
+                    tail = tail->next;
+                  if(tail!=NULL)  tail->prev = NULL;
+                }
+
+                Node*temp = new Node(value,key);
+                mp[key] = temp;
+                temp->prev = head;
+                if(head!=NULL){
+                    head->next = temp;
+                     head = temp;
+                }
+                else{
+                    head = temp;
+                    tail = temp;
+                }
+               
+                
+            }
+        
+    }
+};
+
+
