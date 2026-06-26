@@ -1,0 +1,139 @@
+class Node {
+public:
+    int key, val, freq;
+    Node *prev, *next;
+
+    Node(int key, int val) {
+        this->key = key;
+        this->val = val;
+        freq = 1;
+        prev = next = nullptr;
+    }
+};
+
+class List {
+public:
+    int size;
+    Node *head, *tail;
+
+    List() {
+        size = 0;
+        head = new Node(-1, -1);
+        tail = new Node(-1, -1);
+        head->next = tail;
+        tail->prev = head;
+    }
+
+    void addFront(Node* node) {
+        node->next = head->next;
+        node->prev = head;
+
+        head->next->prev = node;
+        head->next = node;
+
+        size++;
+    }
+
+    void removeNode(Node* node) {
+        Node* prevNode = node->prev;
+        Node* nextNode = node->next;
+
+        prevNode->next = nextNode;
+        nextNode->prev = prevNode;
+
+        size--;
+    }
+};
+
+class LFUCache {
+public:
+    int capacity;
+    int minFreq;
+
+    unordered_map<int, Node*> keyNode;
+    unordered_map<int, List*> freqList;
+
+    LFUCache(int capacity) {
+        this->capacity = capacity;
+        minFreq = 0;
+    }
+
+    void updateFreq(Node* node) {
+
+        // Remove from old frequency list
+        freqList[node->freq]->removeNode(node);
+
+        // Update minimum frequency
+        if (node->freq == minFreq &&
+            freqList[node->freq]->size == 0) {
+            minFreq++;
+        }
+
+        // Increase frequency
+        node->freq++;
+
+        // Create list if not present
+        if (freqList.find(node->freq) == freqList.end()) {
+            freqList[node->freq] = new List();
+        }
+
+        // Add to new frequency list
+        freqList[node->freq]->addFront(node);
+    }
+
+    int get(int key) {
+
+        if (keyNode.find(key) == keyNode.end())
+            return -1;
+
+        Node* node = keyNode[key];
+
+        updateFreq(node);
+
+        return node->val;
+    }
+
+    void put(int key, int value) {
+
+        if (capacity == 0)
+            return;
+
+        // Key already exists
+        if (keyNode.find(key) != keyNode.end()) {
+
+            Node* node = keyNode[key];
+            node->val = value;
+
+            updateFreq(node);
+
+            return;
+        }
+
+        // Cache full
+        if (keyNode.size() == capacity) {
+
+            List* list = freqList[minFreq];
+
+            Node* node = list->tail->prev;
+
+            keyNode.erase(node->key);
+
+            list->removeNode(node);
+
+            delete node;
+        }
+
+        // Insert new node
+        Node* newNode = new Node(key, value);
+
+        minFreq = 1;
+
+        if (freqList.find(1) == freqList.end()) {
+            freqList[1] = new List();
+        }
+
+        freqList[1]->addFront(newNode);
+
+        keyNode[key] = newNode;
+    }
+};
