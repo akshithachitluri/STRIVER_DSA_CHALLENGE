@@ -1,0 +1,26 @@
+class Solution {
+public:
+    string reverseword(string &s,int left,int right){
+        while(left<right){
+            swap(s[left],s[right]);
+            left++;
+            right--;
+        }
+        return s;
+    }
+    string reverseWords(string s) {
+        int n = s.size();
+        reverseword(s,0,n-1);
+              int i = 0,l=0,r=0;
+        while(r<n){
+            while(r<n && s[r] == ' ') r++;
+            if(r>=n) break;
+            while(r<n && s[r] != ' ') s[l++] = s[r++];
+            reverseword(s,i,l-1);
+            s[l++] = ' ';
+            i = l;
+        }
+        s.resize(l-1);
+        return s;
+    }
+};
